@@ -11,7 +11,6 @@ import (
 func main() {
 	fmt.Println("Iniciando Motor SQL - Prueba de Evaluador Lógico...")
 
-	// 1. Tabla simulada con datos básicos
 	tablaPrueba := &almacenamiento.Tabla{
 		Nombre: "amigos",
 		Filas: []almacenamiento.Fila{
@@ -26,7 +25,6 @@ func main() {
 		},
 	}
 
-	// 2. Simulamos un AST con una operación lógica de tipo AND: true AND true
 	astSimulado := &parser.SelectStmt{
 		Columns: []parser.SelectColumn{{IsAsterisk: true}},
 		Table:   "amigos",
@@ -37,7 +35,6 @@ func main() {
 		},
 	}
 
-	// 3. Ensamblamos el pipeline completo
 	var plan executor.Operator
 	plan = executor.NuevoScanOperator(tablaPrueba)
 	plan = executor.NuevoFilterOperator(plan, astSimulado.Where)
@@ -45,7 +42,6 @@ func main() {
 
 	defer plan.Close()
 
-	// 4. Ejecución del árbol
 	for {
 		fila, err := plan.Next()
 		if err == io.EOF {
