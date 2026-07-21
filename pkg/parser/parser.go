@@ -59,6 +59,43 @@ func (p *Parser) ParseSelect() (*SelectStmt, error) {
 		sentencia.Where = where
 	}
 
+	// GROUP BY (opcional)
+	if p.match(TokenGroup) {
+		if _, err := p.consume(TokenBy, "se esperaba BY después de GROUP"); err != nil {
+			return nil, err
+		}
+		grupos, err := p.parseListaColumnas()
+		if err != nil {
+			return nil, err
+		}
+		sentencia.GroupBy = grupos
+	}
+
+	// ORDER BY (opcional)
+	if p.match(TokenOrder) {
+		if _, err := p.consume(TokenBy, "se esperaba BY después de ORDER"); err != nil {
+			return nil, err
+		}
+		orderBy, err := p.parseOrderByList()
+		if err != nil {
+			return nil, err
+		}
+		sentencia.OrderBy = orderBy
+	}
+
+	// LIMIT (opcional)
+	if p.match(TokenLimit) {
+		tokenNum, err := p.consume(TokenNumber, "se esperaba un número después de LIMIT")
+		if err != nil {
+			return nil, err
+		}
+		n, err := strconv.ParseInt(tokenNum.Lexeme, 10, 64)
+		if err != nil {
+			return nil, p.errorAt(tokenNum, "número inválido en LIMIT")
+		}
+		sentencia.Limit = &n
+	}
+
 	if _, err := p.consume(TokenEOF, "se esperaba el fin de la consulta"); err != nil {
 		return nil, err
 	}
@@ -68,36 +105,128 @@ func (p *Parser) ParseSelect() (*SelectStmt, error) {
 
 func (p *Parser) parseSelectColumns() ([]SelectColumn, error) {
 	if p.match(TokenAsterisk) {
-		return []SelectColumn{
-			{
-				IsAsterisk: true,
-			},
-		}, nil
+		return []SelectColumn{{IsAsterisk: true}}, nil
 	}
 
-	primera, err := p.consume(TokenIdentifier, "se esperaba * o un nombre de columna despues de SELECT")
+	primera, err := p.parseSelectColumn()
 	if err != nil {
 		return nil, err
 	}
 
-	columnas := []SelectColumn{
-		{
-			Name: primera.Lexeme,
-		},
-	}
+	columnas := []SelectColumn{primera}
 
 	for p.match(TokenComma) {
-		columna, err := p.consume(TokenIdentifier, "se esperaba un nombre de columna despues de la coma")
+		columna, err := p.parseSelectColumn()
 		if err != nil {
 			return nil, err
 		}
-
-		columnas = append(columnas, SelectColumn{
-			Name: columna.Lexeme,
-		})
+		columnas = append(columnas, columna)
 	}
 
 	return columnas, nil
+}
+
+// parseSelectColumn parsea una columna del SELECT: un identificador o una función de agregación.
+func (p *Parser) parseSelectColumn() (SelectColumn, error) {
+	if p.esAggFunc() {
+		agg, err := p.parseAggFunc()
+		if err != nil {
+			return SelectColumn{}, err
+		}
+		return SelectColumn{Agg: agg}, nil
+	}
+
+	token, err := p.consume(TokenIdentifier, "se esperaba * o un nombre de columna después de SELECT")
+	if err != nil {
+		return SelectColumn{}, err
+	}
+	return SelectColumn{Name: token.Lexeme}, nil
+}
+
+// esAggFunc retorna true si el token actual es una función de agregación.
+func (p *Parser) esAggFunc() bool {
+	switch p.peek().Type {
+	case TokenCount, TokenSum, TokenAvg, TokenMin, TokenMax:
+		return true
+	}
+	return false
+}
+
+// parseAggFunc parsea COUNT(*), COUNT(col), SUM(col), AVG(col), MIN(col), MAX(col).
+func (p *Parser) parseAggFunc() (*AggFunc, error) {
+	funcToken := p.advance()
+	nombre := strings.ToUpper(funcToken.Lexeme)
+
+	if _, err := p.consume(TokenLeftParen, fmt.Sprintf("se esperaba ( después de %s", nombre)); err != nil {
+		return nil, err
+	}
+
+	agg := &AggFunc{Name: nombre}
+
+	if nombre == "COUNT" && p.match(TokenAsterisk) {
+		agg.IsStar = true
+	} else {
+		col, err := p.consume(TokenIdentifier, fmt.Sprintf("se esperaba nombre de columna en %s()", nombre))
+		if err != nil {
+			return nil, err
+		}
+		agg.Column = col.Lexeme
+	}
+
+	if _, err := p.consume(TokenRightParen, fmt.Sprintf("se esperaba ) para cerrar %s()", nombre)); err != nil {
+		return nil, err
+	}
+
+	return agg, nil
+}
+
+// parseListaColumnas parsea una lista de nombres de columna separados por coma.
+func (p *Parser) parseListaColumnas() ([]string, error) {
+	first, err := p.consume(TokenIdentifier, "se esperaba nombre de columna")
+	if err != nil {
+		return nil, err
+	}
+	cols := []string{first.Lexeme}
+	for p.match(TokenComma) {
+		col, err := p.consume(TokenIdentifier, "se esperaba nombre de columna después de la coma")
+		if err != nil {
+			return nil, err
+		}
+		cols = append(cols, col.Lexeme)
+	}
+	return cols, nil
+}
+
+// parseOrderByList parsea la lista de criterios de ORDER BY.
+func (p *Parser) parseOrderByList() ([]OrderByItem, error) {
+	item, err := p.parseOrderByItem()
+	if err != nil {
+		return nil, err
+	}
+	items := []OrderByItem{item}
+	for p.match(TokenComma) {
+		item, err = p.parseOrderByItem()
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}
+
+// parseOrderByItem parsea un criterio de ordenamiento: nombre [ASC|DESC].
+func (p *Parser) parseOrderByItem() (OrderByItem, error) {
+	col, err := p.consume(TokenIdentifier, "se esperaba nombre de columna en ORDER BY")
+	if err != nil {
+		return OrderByItem{}, err
+	}
+	desc := false
+	if p.match(TokenDesc) {
+		desc = true
+	} else {
+		p.match(TokenAsc) // ASC es opcional y se consume si está presente
+	}
+	return OrderByItem{Column: col.Lexeme, Desc: desc}, nil
 }
 
 func (p *Parser) parseExpression() (Expr, error) {

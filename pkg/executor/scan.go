@@ -18,16 +18,19 @@ func NuevoScanOperator(tabla *almacenamiento.Tabla) *ScanOperator {
 }
 
 func (s *ScanOperator) Next() (Row, error) {
-
 	if s.cursor >= len(s.tabla.Filas) {
 		return Row{}, io.EOF
 	}
 
 	filaActual := s.tabla.Filas[s.cursor]
-
 	s.cursor++
 
 	return filaActual, nil
+}
+
+// Schema devuelve el esquema de la tabla que este operador escanea.
+func (s *ScanOperator) Schema() almacenamiento.Esquema {
+	return s.tabla.Esquema
 }
 
 func (s *ScanOperator) Close() error {

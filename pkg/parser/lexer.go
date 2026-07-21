@@ -248,6 +248,34 @@ func keywordTokenType(lexema string) TokenType {
 		return TokenFalse
 	case "NULL":
 		return TokenNull
+	case "ORDER":
+		return TokenOrder
+	case "BY":
+		return TokenBy
+	case "ASC":
+		return TokenAsc
+	case "DESC":
+		return TokenDesc
+	case "LIMIT":
+		return TokenLimit
+	case "GROUP":
+		return TokenGroup
+	case "HAVING":
+		return TokenHaving
+	case "COUNT":
+		return TokenCount
+	case "SUM":
+		return TokenSum
+	case "AVG":
+		return TokenAvg
+	case "MIN":
+		return TokenMin
+	case "MAX":
+		return TokenMax
+	case "IS":
+		return TokenIs
+	case "NOT":
+		return TokenNot
 	default:
 		return TokenIdentifier
 	}

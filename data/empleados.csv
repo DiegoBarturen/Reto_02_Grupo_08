@@ -1,0 +1,11 @@
+id,nombre,departamento,salario,activo
+1,Ana García,Ingeniería,4500.00,true
+2,Carlos López,Marketing,3200.50,true
+3,María Rodríguez,Ingeniería,5100.00,true
+4,Juan Pérez,Recursos Humanos,2900.75,false
+5,Lucía Torres,Marketing,3800.00,true
+6,Pedro Sánchez,Ingeniería,4800.00,true
+7,Sofía Ramírez,Recursos Humanos,3100.00,true
+8,Diego Flores,Marketing,,false
+9,Valentina Cruz,Ingeniería,5500.00,true
+10,Andrés Morales,Recursos Humanos,2750.00,false

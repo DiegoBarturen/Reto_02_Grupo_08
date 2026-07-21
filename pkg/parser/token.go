@@ -28,6 +28,23 @@ const (
 	TokenTrue       TokenType = "TRUE"
 	TokenFalse      TokenType = "FALSE"
 	TokenNull       TokenType = "NULL"
+	// Cláusulas de ordenamiento y agrupación
+	TokenOrder      TokenType = "ORDER"
+	TokenBy         TokenType = "BY"
+	TokenAsc        TokenType = "ASC"
+	TokenDesc       TokenType = "DESC"
+	TokenLimit      TokenType = "LIMIT"
+	TokenGroup      TokenType = "GROUP"
+	TokenHaving     TokenType = "HAVING"
+	// Funciones de agregación
+	TokenCount      TokenType = "COUNT"
+	TokenSum        TokenType = "SUM"
+	TokenAvg        TokenType = "AVG"
+	TokenMin        TokenType = "MIN"
+	TokenMax        TokenType = "MAX"
+	// Otros
+	TokenIs         TokenType = "IS"
+	TokenNot        TokenType = "NOT"
 )
 
 type Position struct {

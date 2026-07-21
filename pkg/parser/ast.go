@@ -14,10 +14,14 @@ type Expr interface {
 	exprNode()
 }
 
+// SelectStmt representa una consulta SELECT completa.
 type SelectStmt struct {
 	Columns []SelectColumn
 	Table   string
 	Where   Expr
+	GroupBy []string     // nombres de columnas del GROUP BY
+	OrderBy []OrderByItem
+	Limit   *int64       // nil si no hay LIMIT
 }
 
 func (s *SelectStmt) String() string {
@@ -40,20 +44,70 @@ func (s *SelectStmt) String() string {
 		consulta += " WHERE " + s.Where.String()
 	}
 
+	if len(s.GroupBy) > 0 {
+		consulta += " GROUP BY " + strings.Join(s.GroupBy, ", ")
+	}
+
+	if len(s.OrderBy) > 0 {
+		items := make([]string, len(s.OrderBy))
+		for i, o := range s.OrderBy {
+			dir := "ASC"
+			if o.Desc {
+				dir = "DESC"
+			}
+			items[i] = o.Column + " " + dir
+		}
+		consulta += " ORDER BY " + strings.Join(items, ", ")
+	}
+
+	if s.Limit != nil {
+		consulta += fmt.Sprintf(" LIMIT %d", *s.Limit)
+	}
+
 	return consulta
 }
 
+// OrderByItem representa un criterio de ordenamiento (columna + dirección).
+type OrderByItem struct {
+	Column string
+	Desc   bool // true = DESC, false = ASC
+}
+
+// SelectColumn representa una columna en la cláusula SELECT.
+// Puede ser *, un nombre de columna o una función de agregación.
 type SelectColumn struct {
 	Name       string
 	IsAsterisk bool
+	Agg        *AggFunc // no nil si es una función de agregación
 }
 
 func (c SelectColumn) String() string {
 	if c.IsAsterisk {
 		return "*"
 	}
-
+	if c.Agg != nil {
+		return c.Agg.String()
+	}
 	return c.Name
+}
+
+// AggFunc representa una función de agregación: COUNT(*), SUM(col), AVG(col), MIN(col), MAX(col).
+type AggFunc struct {
+	Name   string // COUNT, SUM, AVG, MIN, MAX
+	Column string // nombre de columna (vacío para COUNT(*))
+	IsStar bool   // true para COUNT(*)
+}
+
+func (a *AggFunc) exprNode() {}
+
+func (a *AggFunc) String() string {
+	if a == nil {
+		return ""
+	}
+	if a.IsStar {
+		return fmt.Sprintf("%s(*)", a.Name)
+	}
+	return fmt.Sprintf("%s(%s)", a.Name, a.Column)
 }
 
 type Identifier struct {
