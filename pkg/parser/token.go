@@ -12,10 +12,7 @@ const (
 	TokenString     TokenType = "STRING"
 	TokenAsterisk   TokenType = "*"
 	TokenComma      TokenType = ","
-<<<<<<< HEAD
 	TokenDot        TokenType = "."
-=======
->>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	TokenLeftParen  TokenType = "("
 	TokenRightParen TokenType = ")"
 	TokenEqual      TokenType = "="
@@ -27,34 +24,31 @@ const (
 	TokenSelect     TokenType = "SELECT"
 	TokenFrom       TokenType = "FROM"
 	TokenWhere      TokenType = "WHERE"
-<<<<<<< HEAD
 	TokenInner      TokenType = "INNER"
 	TokenJoin       TokenType = "JOIN"
 	TokenOn         TokenType = "ON"
-=======
->>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	TokenAnd        TokenType = "AND"
 	TokenOr         TokenType = "OR"
 	TokenTrue       TokenType = "TRUE"
 	TokenFalse      TokenType = "FALSE"
 	TokenNull       TokenType = "NULL"
 	// Cláusulas de ordenamiento y agrupación
-	TokenOrder      TokenType = "ORDER"
-	TokenBy         TokenType = "BY"
-	TokenAsc        TokenType = "ASC"
-	TokenDesc       TokenType = "DESC"
-	TokenLimit      TokenType = "LIMIT"
-	TokenGroup      TokenType = "GROUP"
-	TokenHaving     TokenType = "HAVING"
+	TokenOrder  TokenType = "ORDER"
+	TokenBy     TokenType = "BY"
+	TokenAsc    TokenType = "ASC"
+	TokenDesc   TokenType = "DESC"
+	TokenLimit  TokenType = "LIMIT"
+	TokenGroup  TokenType = "GROUP"
+	TokenHaving TokenType = "HAVING"
 	// Funciones de agregación
-	TokenCount      TokenType = "COUNT"
-	TokenSum        TokenType = "SUM"
-	TokenAvg        TokenType = "AVG"
-	TokenMin        TokenType = "MIN"
-	TokenMax        TokenType = "MAX"
+	TokenCount TokenType = "COUNT"
+	TokenSum   TokenType = "SUM"
+	TokenAvg   TokenType = "AVG"
+	TokenMin   TokenType = "MIN"
+	TokenMax   TokenType = "MAX"
 	// Otros
-	TokenIs         TokenType = "IS"
-	TokenNot        TokenType = "NOT"
+	TokenIs  TokenType = "IS"
+	TokenNot TokenType = "NOT"
 )
 
 type Position struct {
