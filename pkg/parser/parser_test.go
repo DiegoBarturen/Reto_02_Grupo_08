@@ -102,6 +102,7 @@ func TestParseParentesisAlteranPrecedencia(t *testing.T) {
 	}
 }
 
+<<<<<<< HEAD
 func TestParseInnerJoinOn(t *testing.T) {
 	stmt, err := Parse("SELECT empleados.id, ventas.producto FROM empleados INNER JOIN ventas ON empleados.id = ventas.id")
 	if err != nil {
@@ -119,6 +120,8 @@ func TestParseInnerJoinOn(t *testing.T) {
 	}
 }
 
+=======
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 func TestParseOperadoresComparacion(t *testing.T) {
 	consultas := []string{
 		"SELECT * FROM t WHERE a = 1",

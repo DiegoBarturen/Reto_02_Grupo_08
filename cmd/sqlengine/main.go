@@ -107,6 +107,7 @@ func ejecutarConsulta(sql string, cat *catalogo.Catalogo) {
 		return
 	}
 
+<<<<<<< HEAD
 	if stmt.Join != nil {
 		nestedJoin, err := construirJoinBruto(stmt, cat, "nested")
 		if err != nil {
@@ -137,6 +138,15 @@ func ejecutarConsulta(sql string, cat *catalogo.Catalogo) {
 	}
 
 	plan, err := construirPlanConAlgoritmo(stmt, cat, "nested")
+=======
+	tabla, err := cat.ObtenerTabla(stmt.Table)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	plan, err := construirPlan(stmt, tabla)
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	if err != nil {
 		fmt.Printf("Error al construir el plan: %v\n", err)
 		return
@@ -146,6 +156,7 @@ func ejecutarConsulta(sql string, cat *catalogo.Catalogo) {
 	imprimirResultados(plan)
 }
 
+<<<<<<< HEAD
 // construirPlanConAlgoritmo ensambla el árbol de operadores Volcano a partir del AST.
 // Orden: Scan → Join(ON) → Filter(WHERE) → Aggregate(GROUP BY) o Project(SELECT) → Sort(ORDER BY) → Limit
 func construirJoinBruto(stmt *parser.SelectStmt, cat *catalogo.Catalogo, algoritmo string) (*executor.JoinOperator, error) {
@@ -190,6 +201,12 @@ func construirPlanConAlgoritmo(stmt *parser.SelectStmt, cat *catalogo.Catalogo, 
 		}
 		plan = joinPlan
 	}
+=======
+// construirPlan ensambla el árbol de operadores Volcano a partir del AST.
+// Orden: Scan → Filter(WHERE) → Aggregate(GROUP BY) o Project(SELECT) → Sort(ORDER BY) → Limit
+func construirPlan(stmt *parser.SelectStmt, tabla *almacenamiento.Tabla) (executor.Operator, error) {
+	var plan executor.Operator = executor.NuevoScanOperator(tabla)
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 
 	// WHERE
 	if stmt.Where != nil {

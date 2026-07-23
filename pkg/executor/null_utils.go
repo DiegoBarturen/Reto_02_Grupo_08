@@ -8,16 +8,23 @@ import (
 )
 
 // indiceDeLaColumna busca el índice de una columna por nombre (insensible a mayúsculas).
+<<<<<<< HEAD
 // Acepta tanto nombres simples ("id") como calificados ("empleados.id").
 // Retorna error si la columna no existe en el esquema.
 func indiceDeLaColumna(esquema almacenamiento.Esquema, nombre string) (int, error) {
 	lower := strings.ToLower(nombre)
 
+=======
+// Retorna error si la columna no existe en el esquema.
+func indiceDeLaColumna(esquema almacenamiento.Esquema, nombre string) (int, error) {
+	lower := strings.ToLower(nombre)
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	for i, col := range esquema.Columnas {
 		if strings.ToLower(col.Nombre) == lower {
 			return i, nil
 		}
 	}
+<<<<<<< HEAD
 
 	if strings.Contains(lower, ".") {
 		parte := lower[strings.LastIndex(lower, ".")+1:]
@@ -31,6 +38,8 @@ func indiceDeLaColumna(esquema almacenamiento.Esquema, nombre string) (int, erro
 		}
 	}
 
+=======
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	return -1, fmt.Errorf("la columna %q no existe en el esquema", nombre)
 }
 

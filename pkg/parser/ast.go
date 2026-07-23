@@ -18,19 +18,25 @@ type Expr interface {
 type SelectStmt struct {
 	Columns []SelectColumn
 	Table   string
+<<<<<<< HEAD
 	Join    *JoinClause
+=======
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	Where   Expr
 	GroupBy []string     // nombres de columnas del GROUP BY
 	OrderBy []OrderByItem
 	Limit   *int64       // nil si no hay LIMIT
 }
 
+<<<<<<< HEAD
 // JoinClause representa la cláusula INNER JOIN ... ON.
 type JoinClause struct {
 	Table string
 	On    Expr
 }
 
+=======
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 func (s *SelectStmt) String() string {
 	if s == nil {
 		return ""
@@ -47,10 +53,13 @@ func (s *SelectStmt) String() string {
 		s.Table,
 	)
 
+<<<<<<< HEAD
 	if s.Join != nil {
 		consulta += fmt.Sprintf(" INNER JOIN %s ON %s", s.Join.Table, s.Join.On.String())
 	}
 
+=======
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	if s.Where != nil {
 		consulta += " WHERE " + s.Where.String()
 	}

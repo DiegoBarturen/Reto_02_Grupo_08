@@ -49,8 +49,11 @@ func (l *Lexer) Tokens() ([]Token, error) {
 			tokens = append(tokens, l.token(TokenAsterisk, posicion))
 		case ',':
 			tokens = append(tokens, l.token(TokenComma, posicion))
+<<<<<<< HEAD
 		case '.':
 			tokens = append(tokens, l.token(TokenDot, posicion))
+=======
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 		case '(':
 			tokens = append(tokens, l.token(TokenLeftParen, posicion))
 		case ')':
@@ -240,12 +243,15 @@ func keywordTokenType(lexema string) TokenType {
 		return TokenFrom
 	case "WHERE":
 		return TokenWhere
+<<<<<<< HEAD
 	case "INNER":
 		return TokenInner
 	case "JOIN":
 		return TokenJoin
 	case "ON":
 		return TokenOn
+=======
+>>>>>>> af2c9a5137fac5ac5ffaed2e81ebc59fd20fca5a
 	case "AND":
 		return TokenAnd
 	case "OR":
